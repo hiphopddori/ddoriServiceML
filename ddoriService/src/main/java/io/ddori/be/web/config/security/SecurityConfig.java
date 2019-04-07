@@ -35,6 +35,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	LoginSuccessHandler loginSuccessHandler;
 	
+	@Autowired
+	private CustomAccessDeniedHandler accessDeniedHandler;
+	
 	@Bean("authenticationManager")
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -71,6 +74,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			//.defaultSuccessUrl("/")
 	        //.failureHandler(authFailureHandler)
 	        //.successHandler(loginSuccessHandler)
+			.and()
+			.exceptionHandling().accessDeniedHandler(accessDeniedHandler)  //인증된 상태에서의 AcessDenied
+			.and()
+			.exceptionHandling().authenticationEntryPoint(new CustomHttp403ForbiddenEntryPoint()) //인증 안된 상태에서의 Access Denined
+		
+			//.and()
+			//.addFilterAfter(httpClientFilter(), AccessDeniedExceptionFilter.class)
+			//.and()
+			//.sessionManagement()
+			//.invalidSessionUrl("/index/login.html")				//세션이 끊겼을때 이동 할 페이지
 			.and()
   			.logout()
   			//.logoutSuccessUrl("/index/login.html")
